@@ -19,4 +19,10 @@ test('unauthenticated and pending sessions cannot render finance routes or seede
   }
   assert.match(renderRoute('/login'), /Welcome back/);
   assert.match(renderRoute('/register'), /New accounts start empty/);
+  const user = { id: 'routing-fixture', name: 'Student', email: 'student@example.com' };
+  for (const path of ['/transactions', '/transactions?source=local', '/transactions?source=account']) {
+    const html = renderRoute(path, 'authenticated', user);
+    assert.match(html, /Account transactions/);
+    assert.doesNotMatch(html, /Local workspace|Transaction storage|Restore sample|Saved in this browser/);
+  }
 });

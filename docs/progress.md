@@ -74,3 +74,7 @@ The reported account-server error was reproduced: backend port 5000 refused conn
 ## Interrupted Google sign-in correction
 
 Logs identified an API watch-mode restart during POST /api/auth/google, causing ECONNRESET despite later healthy readiness checks. Normal development now runs the API without automatic restarts; watch mode is explicit opt-in. Anonymous popup focus no longer triggers a competing session check. Interrupted Google submissions show a fresh-attempt instruction without replaying credential writes. Added DOM-level coverage for anonymous/pending/authenticated focus and an API regression for interrupted writes. The running API retained its PID and answered eight proxied readiness checks after a server-file timestamp change. An existing real browser session restored successfully at localhost; no account data was changed for this verification.
+
+## Account-only Transactions correction
+
+The Transactions page still contained a separate legacy storage switch that bypassed the shared account-only wrapper. Removed that implementation and routed every Transactions URL through the signed-in account view. Added authenticated route regression checks for plain, source=local and source=account URLs. Browser verification confirmed the old local URL renders Account transactions without the workspace switch. Frontend, DOM/routing and backend checks plus the production build passed. No existing financial records were changed.
