@@ -8,6 +8,8 @@ const api = createAuthApi();
 export function AuthProvider({ children }) {
   const [state, setState] = useState({ user: null, status: 'loading', error: null });
   const active = useRef(null);
+  const current = useRef(state);
+  current.current = state;
   const perform = useCallback(async (operation, { checking = false } = {}) => {
     active.current?.abort();
     const controller = new AbortController();
@@ -35,7 +37,9 @@ export function AuthProvider({ children }) {
   const expire = useCallback(() => { active.current?.abort(); setState({ user: null, status: 'anonymous', error: null }); }, []);
   useEffect(() => {
     refresh();
-    const onFocus = () => { if (document.visibilityState === 'visible' && !active.current) refresh(); };
+    // A Google popup returns focus before its credential callback can run.
+    // Anonymous session checks must not interrupt that sign-in or discard its result.
+    const onFocus = () => { if (current.current.user && document.visibilityState === 'visible' && !active.current) refresh(); };
     window.addEventListener('focus', onFocus);
     return () => { active.current?.abort(); window.removeEventListener('focus', onFocus); };
   }, [refresh]);

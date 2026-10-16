@@ -52,7 +52,15 @@ export function createAuthApi(fetcher = (...args) => fetch(...args), timeoutMs =
     login: (body, signal) => request('login', { method: 'POST', body, signal }),
     register: (body, signal) => request('register', { method: 'POST', body, signal }),
     googleChallenge: (signal) => request('google/challenge', { signal, challenge: true }),
-    google: ({ credential, password }, signal) => request('google', { method: 'POST', body: { credential, ...(password !== undefined ? { password } : {}) }, signal }),
+    google: async ({ credential, password }, signal) => {
+      try { return await request('google', { method: 'POST', body: { credential, ...(password !== undefined ? { password } : {}) }, signal }); }
+      catch (error) {
+        if (!signal?.aborted && (error.code === 'NETWORK_ERROR' || (error.code === 'INVALID_RESPONSE' && error.status >= 500))) {
+          throw new ApiError('The connection was interrupted while verifying Google sign-in. Choose your Google account again to start a fresh attempt.', { status: error.status, code: 'GOOGLE_CONNECTION_ERROR' });
+        }
+        throw error;
+      }
+    },
     forgotPassword: (email, signal) => request('forgot-password', { method: 'POST', body: { email }, signal, notice: true }),
     resetPassword: ({ token, password }, signal) => request('reset-password', { method: 'POST', body: { token, password }, signal, notice: true }),
     logout: (signal) => request('logout', { method: 'POST', body: {}, signal }),

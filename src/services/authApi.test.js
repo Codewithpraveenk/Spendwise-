@@ -75,6 +75,15 @@ test('unreadable or incomplete responses produce actionable errors', async () =>
 test('network failures are reported without exposing request data', async () => {
   await assert.rejects(createAuthApi(async () => { throw new Error('private details'); }).me(), (error) => error.code === 'NETWORK_ERROR' && !error.message.includes('private details'));
 });
+
+test('interrupted Google writes request a fresh sign-in without replaying credentials', async () => {
+  for (const response of [null, new Response('proxy restart', { status: 500 })]) {
+    let calls = 0;
+    const api = createAuthApi(async () => { calls++; if (!response) throw new Error('ECONNRESET private details'); return response; });
+    await assert.rejects(api.google({ credential: 'fictional-test-token' }), (error) => error.code === 'GOOGLE_CONNECTION_ERROR' && /fresh attempt/.test(error.message) && !error.message.includes('private details'));
+    assert.equal(calls, 1);
+  }
+});
 test('account requests time out and support cancellation', async () => {
   const fetcher = (_url, { signal }) => new Promise((_resolve, reject) => {
     if (signal.aborted) reject(new DOMException('Cancelled', 'AbortError'));

@@ -70,3 +70,7 @@ Finance routes now require a verified account session. Public sign-in/register/r
 ## Local connection correction
 
 The reported account-server error was reproduced: backend port 5000 refused connections while Vite was still running. Restarting the backend restored Atlas connectivity. Development now starts both services with npm run dev and waits for database readiness before starting Vite. Port 5173 is strict, and localhost uses IPv4 so both local addresses work. npm run doctor verifies the API and proxy; both passed against the running app. Added a VS Code app task and development-only connection guidance. Release checks passed; hosting, provider setup and the previously deferred controls remain pending.
+
+## Interrupted Google sign-in correction
+
+Logs identified an API watch-mode restart during POST /api/auth/google, causing ECONNRESET despite later healthy readiness checks. Normal development now runs the API without automatic restarts; watch mode is explicit opt-in. Anonymous popup focus no longer triggers a competing session check. Interrupted Google submissions show a fresh-attempt instruction without replaying credential writes. Added DOM-level coverage for anonymous/pending/authenticated focus and an API regression for interrupted writes. The running API retained its PID and answered eight proxied readiness checks after a server-file timestamp change. An existing real browser session restored successfully at localhost; no account data was changed for this verification.

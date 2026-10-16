@@ -32,7 +32,7 @@ Use one VS Code terminal from the repository root:
 npm run dev
 ```
 
-This starts both the backend and frontend, waiting for database readiness before opening Vite. Keep the terminal running. Check connectivity in another terminal with `npm run doctor`.
+This starts a stable backend process and the frontend, waiting for database readiness before opening Vite. Backend watch mode is opt-in with npm run dev:server:watch; restart normal development deliberately after backend edits. Keep the terminal running. Check connectivity in another terminal with `npm run doctor`.
 
 Open the URL printed by Vite, normally http://localhost:5173. Finance pages require sign-in, the API and MongoDB. Previous browser records are available only through explicit reviewed import; they never populate the account dashboard automatically. Recovery requires a configured email transport.
 
@@ -48,7 +48,7 @@ npm run check:release
 
 This runs frontend/backend checks, builds React and runs seven disposable MongoDB integration suites. It does not use your private Atlas records or send real emails. Initial integration setup downloads a MongoDB test binary.
 
-Most recent local release run: 100 frontend checks, a route-access regression suite, 30 backend checks, all seven integration suites and the production build passed. HTTP smoke checks covered the actual built assets, nested client route and API errors. This is not proof of deployed Google/email behavior or a completed browser release audit.
+Most recent local release run: 101 frontend checks, route-access and popup-focus DOM regressions, 30 backend checks, all seven integration suites and the production build passed. HTTP smoke checks covered the actual built assets, nested client route and API errors. This is not proof of deployed Google/email behavior or a completed browser release audit.
 
 The GitHub Actions workflow runs release checks and builds the Docker image. Its first remote run and the container build are still pending.
 

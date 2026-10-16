@@ -13,7 +13,7 @@ This starts Express and waits up to 30 seconds for MongoDB readiness before star
 
 ## Cannot reach the account server
 
-The original incident was caused by running the frontend while backend port 5000 had no listener. A working frontend page does not prove the API is running.
+Two separate failures were observed: the frontend was running without an API, and a later Google POST was interrupted by a backend watch-mode restart (ECONNRESET). Normal npm run dev now uses a stable backend process without watch mode. A working frontend page alone does not prove the API is running.
 
 In a second terminal:
 
@@ -38,3 +38,11 @@ The provider is src/state/AuthProvider.jsx and the context/hook are src/state/us
 ## Database unavailable
 
 /api/health checks whether the process is alive. /api/ready checks database readiness. Financial writes require Atlas or a MongoDB replica set. A wrong-password response is different from a connection failure; do not remove production authentication protections to fix network errors.
+
+## Editing backend code
+
+Normal development keeps the API running without automatic restarts so sign-in requests are not interrupted. After changing backend code, stop and restart npm run dev when no request is in progress. For deliberate backend debugging only, npm run dev:server:watch enables watch mode; saving backend files can interrupt requests. Do not run that together with the combined command. Frontend hot reload stays enabled normally.
+
+## Interrupted Google sign-in
+
+An interrupted Google request is not automatically replayed because its nonce may already have been consumed. Choose your Google account again for a fresh attempt. Anonymous popup focus no longer starts a competing session check; authenticated sessions still recheck when returning to the app. Use http://localhost:5173 for the configured Google origin. Existing records are not deleted or replaced when a request fails.
