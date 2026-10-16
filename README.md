@@ -6,7 +6,7 @@ A student finance manager built with React, Vite, JavaScript, Tailwind CSS, Reac
 
 - Responsive overview with income/expense summaries, charts and category breakdowns.
 - Searchable transactions, category budgets and recurring-payment tracking.
-- Separate browser-local and authenticated account workspaces.
+- Sign-in-first access with private account dashboards; new accounts start empty.
 - Owner-scoped APIs, version conflict handling and atomic recurring-payment records.
 - Password authentication, HttpOnly cookie sessions and Google sign-in with safe existing-account linking.
 - Password recovery with expiring single-use tokens, session revocation and encrypted queued email.
@@ -36,7 +36,7 @@ npm run dev:server
 npm run dev
 ```
 
-Open the URL printed by Vite, normally http://localhost:5173. Local workspace features use browser storage. Account features require the API and MongoDB. Recovery requires a configured email transport.
+Open the URL printed by Vite, normally http://localhost:5173. Finance pages require sign-in, the API and MongoDB. Previous browser records are available only through explicit reviewed import; they never populate the account dashboard automatically. Recovery requires a configured email transport.
 
 ## Architecture
 
@@ -50,7 +50,7 @@ npm run check:release
 
 This runs frontend/backend checks, builds React and runs seven disposable MongoDB integration suites. It does not use your private Atlas records or send real emails. Initial integration setup downloads a MongoDB test binary.
 
-Most recent local release run: 100 frontend checks, 30 backend checks, all seven integration suites and the production build passed. HTTP smoke checks covered the actual built assets, nested client route and API errors. This is not proof of deployed Google/email behavior or a completed browser release audit.
+Most recent local release run: 100 frontend checks, a route-access regression suite, 30 backend checks, all seven integration suites and the production build passed. HTTP smoke checks covered the actual built assets, nested client route and API errors. This is not proof of deployed Google/email behavior or a completed browser release audit.
 
 The GitHub Actions workflow runs release checks and builds the Docker image. Its first remote run and the container build are still pending.
 

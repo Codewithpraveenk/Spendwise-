@@ -14,7 +14,7 @@ export default function AuthPage({ registering = false }) {
   const [visible, setVisible] = useState(false);
   const formRef = useRef(null);
   useEffect(() => { clearError(); }, [registering, clearError]);
-  if (user) return <Navigate to="/account" replace />;
+  if (user) return <Navigate to="/" replace />;
   const busy = status === 'loading' || status === 'submitting';
   async function submit(event) {
     event.preventDefault();
@@ -27,7 +27,7 @@ export default function AuthPage({ registering = false }) {
     }
     const payload = { email: values.email.trim(), password: values.password, ...(registering ? { name: values.name.trim() } : {}) };
     const ok = await (registering ? register(payload) : login(payload));
-    if (ok) { setValues({ name: '', email: '', password: '', confirmPassword: '' }); navigate('/account', { replace: true }); }
+    if (ok) { setValues({ name: '', email: '', password: '', confirmPassword: '' }); navigate('/', { replace: true }); }
     else setValues((previous) => ({ ...previous, password: '', confirmPassword: '' }));
   }
   const field = (name, label, type, autoComplete, hint) => <FormField key={name} name={name} label={label} error={errors[name]} hint={hint}>
@@ -53,7 +53,6 @@ export default function AuthPage({ registering = false }) {
       <p className="text-center text-sm text-slate-600">{registering ? 'Already have an account?' : 'New to SpendWise?'} <Link to={registering ? '/login' : '/register'} className="font-semibold text-indigo-700 underline">{registering ? 'Sign in' : 'Create account'}</Link></p>
     </form>
     <GoogleSignIn busy={busy} />
-    <p className="mt-5 text-sm leading-6 text-slate-600">After signing in, choose Account data on Overview, Transactions, Budgets, Recurring payments, or Data & backups for server records. Your local workspace stays separate and is never imported automatically.</p>
-    <Link to="/" className="mt-3 inline-flex min-h-11 items-center text-sm font-medium text-indigo-700 underline">Continue with local workspace</Link>
+    <p className="mt-5 text-sm leading-6 text-slate-600">Sign in to manage your private transactions, budgets and recurring payments. New accounts start empty.</p>
   </section>;
 }

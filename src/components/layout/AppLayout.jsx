@@ -1,7 +1,5 @@
 import { Link, NavLink, Outlet, useLocation, useSearchParams } from 'react-router';
 import { useEffect, useRef } from 'react';
-import WorkspaceNotice from './WorkspaceNotice';
-import { useTransactions } from '../../state/TransactionsContext';
 import { useAuth } from '../../state/useAuth';
 
 const navigation = [
@@ -14,12 +12,10 @@ const navigation = [
 ];
 
 export default function AppLayout() {
-  const { storageError } = useTransactions();
-  const { user, status } = useAuth();
+  const { user } = useAuth();
   const { pathname } = useLocation();
   const [params] = useSearchParams();
-  const accountView = ['/', '/transactions', '/budgets', '/recurring', '/data'].includes(pathname) && params.get('source') === 'account';
-  const accountLink = (path) => accountView && ['/', '/transactions', '/budgets', '/recurring', '/data'].includes(path) ? `${path}?source=account${params.get('month') ? `&month=${encodeURIComponent(params.get('month'))}` : ''}` : path;
+  const accountLink = (path) => ['/', '/transactions', '/budgets', '/recurring', '/data'].includes(path) ? `${path}?source=account${params.get('month') ? `&month=${encodeURIComponent(params.get('month'))}` : ''}` : path;
   const mainRef = useRef(null);
   const previousPath = useRef(null);
   useEffect(() => {
@@ -49,18 +45,17 @@ export default function AppLayout() {
             </NavLink>
           ))}
         </nav>
-        <p className="mt-auto hidden pt-8 text-xs text-slate-400 lg:block">{accountView ? 'Account workspace · Server storage' : 'Personal workspace · Browser storage'}</p>
+        <p className="mt-auto hidden pt-8 text-xs text-slate-400 lg:block">Account workspace · Server storage</p>
       </aside>
       <div className="min-w-0">
         <header className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 bg-white px-5 py-5 sm:px-8 lg:px-10">
           <div>
-            <p className="text-sm font-medium text-slate-700">{accountView ? 'Account workspace' : 'Personal workspace'}</p>
+            <p className="text-sm font-medium text-slate-700">Account workspace</p>
             <p className="mt-1 text-xs text-slate-500">All amounts in INR</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3"><span className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500">{accountView ? 'Server account data' : storageError ? 'Not saved' : 'Saved in this browser'}</span><Link to={user || status === 'loading' ? '/account' : '/login'} className="inline-flex min-h-11 items-center rounded-lg border border-slate-200 px-3 text-sm font-medium text-indigo-700">{user ? 'Your account' : status === 'loading' ? 'Checking session…' : 'Sign in'}</Link></div>
+          <div className="flex flex-wrap items-center gap-3"><span className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500">Saved to your account</span><Link to="/account" className="inline-flex min-h-11 items-center rounded-lg border border-slate-200 px-3 text-sm font-medium text-indigo-700">{user?.name || 'Your account'}</Link></div>
         </header>
         <main ref={mainRef} id="main-content" tabIndex={-1} className="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
-          {!accountView && <WorkspaceNotice />}
           <Outlet />
         </main>
       </div>

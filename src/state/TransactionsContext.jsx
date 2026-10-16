@@ -20,7 +20,7 @@ const browserStorage = {
 // Kept under its original name so existing pages can use the same public hook.
 // The provider now owns the complete finance workspace.
 export function TransactionsProvider({ children }) {
-  const [initial] = useState(() => loadWorkspace(browserStorage, seed));
+  const [initial] = useState(() => loadWorkspace(browserStorage, { transactions: [], budgets: [], recurringPayments: [] }));
   const [state, dispatch] = useReducer(workspaceReducer, { records: initial.records, budgets: initial.budgets, recurringPayments: initial.recurringPayments, lastDeleted: null });
   const [readBlocked, setReadBlocked] = useState(Boolean(initial.error));
   const [storageError, setStorageError] = useState(initial.error);

@@ -24,7 +24,7 @@ export default function AccountPage() {
         <AccountError error={error} />
         {user ? <>
           <div><h2 className="text-xl font-semibold break-words">{user.name}</h2><p className="mt-2 break-all text-sm text-slate-600">{user.email}</p></div>
-          <p className="text-sm leading-6 text-slate-600">You’re signed in. Signing out ends this browser’s account session. Your local finance workspace stays on this device.</p>
+          <p className="text-sm leading-6 text-slate-600">You’re signed in. Your finance pages use this account’s saved records. Signing out returns you to the sign-in page.</p>
           <button type="button" disabled={busy} onClick={logout} className={`${secondaryButtonClass} disabled:opacity-50`}>{status === 'submitting' ? 'Signing out…' : 'Sign out'}</button>
           <Link to="/forgot-password" className="inline-flex min-h-11 items-center text-sm font-medium text-indigo-700 underline">Reset your password by email</Link>
         </> : status !== 'loading' && <>
@@ -34,6 +34,6 @@ export default function AccountPage() {
         </>}
       </div>
     </div>
-    <div className="mt-5 rounded-lg border border-indigo-100 bg-indigo-50 p-4 text-sm leading-6 text-indigo-950"><strong>Storage status:</strong> Overview, transactions, budgets, and recurring payments have separate local and account views. Data & backups supports separate local/account exports and a reviewed first import into an empty account. Signing in does not import browser records.<Link to="/?source=account" className="mt-3 block font-medium underline">Open account overview</Link><Link to="/recurring?source=account" className="mt-2 block font-medium underline">Open account payments</Link><Link to="/data?source=account" className="mt-2 block font-medium underline">Open account backups</Link></div>
+    <div className="mt-5 rounded-lg border border-indigo-100 bg-indigo-50 p-4 text-sm leading-6 text-indigo-950"><strong>Account storage:</strong> Your dashboard, transactions, budgets and recurring payments use your saved account records. New accounts start empty. Older browser records can only be imported through the reviewed import in Data & backups.<Link to="/" className="mt-3 block font-medium underline">Open overview</Link><Link to="/data" className="mt-2 block font-medium underline">Open backups</Link></div>
   </section>;
 }

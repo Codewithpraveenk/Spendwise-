@@ -62,3 +62,7 @@ The user selected free hosting. Brevo HTTPS delivery, transport configuration va
 ## GitHub preparation checkpoint
 
 Brevo account setup is deferred at the user's request. Added a GitHub Actions workflow for release checks/container building, stronger publish exclusions and a GitHub upload guide. Gitignore behavior was checked in an isolated disposable repository: private env/log/runtime files are ignored; env templates and the workflow remain publishable. The actual project has not been initialized, committed, pushed or deployed by the agent. Remote CI and Docker validation are pending.
+
+## Sign-in-first correction
+
+Finance routes now require a verified account session. Public sign-in/register/recovery pages use a separate layout without finance navigation. Every financial view uses account data regardless of legacy source query parameters; browser workspace switching and guest access are removed. New browser import workspaces start empty; older browser records and existing account records are preserved for deliberate reviewed import or normal account use. Browser checks against a disposable MongoDB verified root/direct-route redirects, empty account totals, session restoration and logout. Full release checks passed, including the new route-access rendering regression. See login-first-preview.png and empty-account-preview.png.
