@@ -1,0 +1,31 @@
+{
+  "name": "spendwise",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": { "node": ">=24 <25" },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "dev:server": "npm --prefix server run dev",
+    "start": "npm --prefix server start",
+    "check": "npm test && npm run test:server && npm run build",
+    "test:integration": "npm --prefix server run test:auth && npm --prefix server run test:google && npm --prefix server run test:recovery && npm --prefix server run test:finance && npm --prefix server run test:workspace && npm --prefix server run test:db && npm --prefix server run test:production",
+    "check:release": "npm run check && npm run test:integration",
+    "test:server": "npm --prefix server test",
+    "test": "node --test src/utils/*.test.js src/services/*.test.js src/state/*.test.js"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router": "^7.9.0",
+    "recharts": "^3.3.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "tailwindcss": "^4.1.0",
+    "vite": "^7.1.0"
+  }
+}

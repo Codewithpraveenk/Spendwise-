@@ -1,0 +1,36 @@
+{
+  "name": "spendwise-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "node --watch --env-file-if-exists=.env src/server.js",
+    "start": "node --env-file-if-exists=.env src/server.js",
+    "test": "node --test test/*.test.js",
+    "test:db": "node --test test/database.integration.js",
+    "db:indexes": "node --env-file-if-exists=.env src/ensureIndexes.js",
+    "test:auth": "node --test test/auth.integration.js",
+    "test:finance": "node --test test/finance.integration.js",
+    "test:workspace": "node --test test/workspace.integration.js",
+    "test:google": "node --test test/google.integration.js",
+    "test:recovery": "node --test test/recovery.integration.js",
+    "mail:check": "node --env-file-if-exists=.env src/checkMail.js",
+    "test:production": "node --test test/production.integration.js"
+  },
+  "dependencies": {
+    "cookie": "^2.0.1",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.7.1",
+    "google-auth-library": "^11.3.1",
+    "helmet": "^8.1.0",
+    "mongoose": "^9.11.2",
+    "nodemailer": "^10.1.2"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^11.3.0"
+  }
+}
