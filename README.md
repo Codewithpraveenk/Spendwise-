@@ -1,5 +1,7 @@
 # SpendWise
 
+[Live portfolio preview](https://spendwise-praveenk.onrender.com) — free hosting may take time to wake up. Password-reset email is currently unavailable.
+
 A student finance manager built with React, Vite, JavaScript, Tailwind CSS, React Router, Recharts, Express and MongoDB. Amounts use integer paise and INR formatting.
 
 ## Features
@@ -54,7 +56,7 @@ The GitHub Actions workflow runs release checks and builds the Docker image. Its
 
 ## Status and deployment
 
-Eight of ten core delivery milestones are complete; remaining milestones contain substantial release work. The app is not publicly deployed or declared production-ready. Email verification, signed-in security controls and Brevo account setup are explicitly deferred. Local Gmail SMTP remains configured privately; HTTPS email support is implemented but needs provider credentials for free hosting.
+Eight of ten core delivery milestones are complete; remaining milestones contain substantial release work. The app is deployed as a free portfolio preview; it is not declared production-ready. Email verification, signed-in security controls and Brevo account setup are explicitly deferred. Local Gmail SMTP remains configured privately; HTTPS email support is implemented but needs provider credentials for free hosting.
 
 - [Current progress](docs/progress.md)
 - [GitHub preparation and upload](docs/github-release.md)

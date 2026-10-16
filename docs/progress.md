@@ -78,3 +78,7 @@ Logs identified an API watch-mode restart during POST /api/auth/google, causing 
 ## Account-only Transactions correction
 
 The Transactions page still contained a separate legacy storage switch that bypassed the shared account-only wrapper. Removed that implementation and routed every Transactions URL through the signed-in account view. Added authenticated route regression checks for plain, source=local and source=account URLs. Browser verification confirmed the old local URL renders Account transactions without the workspace switch. Frontend, DOM/routing and backend checks plus the production build passed. No existing financial records were changed.
+
+## Live Render deployment
+
+The free portfolio preview is live at https://spendwise-praveenk.onrender.com. Initial deployment built correctly but could not reach Atlas because the IP allowlist only included the local computer. After explicit approval, added Render’s two displayed outbound ranges and verified both active. Redeployment prepared indexes, connected to Atlas and started successfully in production. Public health/readiness returned 200, private finance returned 401 while signed out, unknown API returned JSON 404, and built assets/nested routes loaded. Email recovery is explicitly disabled and disclosed in the UI. The user confirmed the live Google JavaScript origin was saved, but Google still reported origin rejection during verification; Google Cloud’s client page could not load here, so live Google login and account-cookie persistence are not claimed complete.

@@ -95,3 +95,13 @@ Keep the previous build/image for application rollback. Do not roll back by dele
 After creating a GitHub repository and pushing the source, create a Render Blueprint from that repository using render.yaml. Review the Free plan and enter the requested private environment values. APP_ORIGIN and CLIENT_ORIGINS need the actual assigned HTTPS address. Add that address to Google origins too. This file has not been deployed or validated by Render yet.
 
 The start command prepares indexes before starting the app because free services do not provide a separate pre-deploy job. A failed index step prevents startup. TRUST_PROXY remains conservative until the actual proxy path is verified; this may group users under one proxy IP and must be checked before release.
+
+## Render deployment checkpoint
+
+The free Node service spendwise-praveenk was created from this repository. Its public URL is https://spendwise-praveenk.onrender.com. Deployment is live; public health/readiness, built assets, nested routes and protected-finance authentication checks passed. Build succeeded; startup failed with DATABASE_UNREACHABLE before index preparation. The initial Atlas allowlist permitted only the developer computer address. With explicit user approval, both displayed Render ranges were added and verified active; the subsequent deployment connected successfully. Render displayed outbound ranges 74.220.52.0/24 and 74.220.60.0/24; these approved entries are now configured in Atlas. These ranges are shared with other services in the region, and database authentication remains required. Do not substitute unrestricted network access.
+
+Email is explicitly disabled for this preview. Once deployment succeeds, add the exact HTTPS public origin to the existing Google web client and verify real sign-in, secure cookie sessions, ownership and data persistence. The public URL assignment alone is not proof of a working deployment.
+
+## Live verification
+
+The successful deployment prepared indexes and started Node in production on Render port 10000. GET /api/health and /api/ready returned 200; a signed-out finance request returned 401; an unknown API route returned JSON 404. The root opened the sign-in page, and email capability explicitly reports disabled. Google origin acceptance and a live account session still need final verification. Free hosting may sleep when idle.
