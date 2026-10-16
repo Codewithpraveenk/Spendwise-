@@ -7,7 +7,7 @@ export class ApiError extends Error {
 }
 
 export function createAuthApi(fetcher = (...args) => fetch(...args), timeoutMs = 15000) {
-  async function request(path, { method = 'GET', body, signal, challenge = false, notice = false } = {}) {
+  async function request(path, { method = 'GET', body, signal, challenge = false, notice = false, capabilities = false } = {}) {
     const controller = new AbortController();
     const abort = () => controller.abort();
     signal?.addEventListener('abort', abort, { once: true });
@@ -27,6 +27,10 @@ export function createAuthApi(fetcher = (...args) => fetch(...args), timeoutMs =
         throw new ApiError(response.status >= 500 ? 'Cannot reach the account server. Check that the backend is running and MongoDB is configured, then try again.' : 'The server returned an unreadable response. Please try again.', { status: response.status, code: 'INVALID_RESPONSE' });
       }
       if (!response.ok) throw new ApiError(data.error?.message ?? 'The request failed. Please try again.', { status: response.status, code: data.error?.code ?? 'REQUEST_FAILED', retryAfter: response.headers.get('retry-after') });
+      if (capabilities) {
+        if (typeof data.passwordRecovery !== 'boolean') throw new ApiError('The server returned invalid recovery availability.', { code: 'INVALID_RESPONSE' });
+        return { passwordRecovery: data.passwordRecovery };
+      }
       if (notice) {
         if (typeof data?.message !== 'string' || !data.message || data.message.length > 1000) throw new ApiError('The server did not confirm the recovery request. Try signing in or requesting a fresh link.', { code: 'INVALID_RESPONSE' });
         return data.message;
@@ -48,6 +52,7 @@ export function createAuthApi(fetcher = (...args) => fetch(...args), timeoutMs =
     }
   }
   return {
+    capabilities: (signal) => request('capabilities', { signal, capabilities: true }),
     me: (signal) => request('me', { signal }),
     login: (body, signal) => request('login', { method: 'POST', body, signal }),
     register: (body, signal) => request('register', { method: 'POST', body, signal }),

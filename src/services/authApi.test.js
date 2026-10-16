@@ -68,6 +68,11 @@ test('account API preserves structured errors and retry timing', async () => {
 test('logout accepts an empty 204 response', async () => {
   assert.equal(await createAuthApi(async () => new Response(null, { status: 204 })).logout(), null);
 });
+
+test('recovery capability responses require an explicit boolean', async () => {
+  assert.deepEqual(await createAuthApi(async () => Response.json({ passwordRecovery: false })).capabilities(), { passwordRecovery: false });
+  await assert.rejects(createAuthApi(async () => Response.json({ passwordRecovery: 'false' })).capabilities(), { code: 'INVALID_RESPONSE' });
+});
 test('unreadable or incomplete responses produce actionable errors', async () => {
   await assert.rejects(createAuthApi(async () => new Response('bad gateway', { status: 502 })).me(), { code: 'INVALID_RESPONSE' });
   await assert.rejects(createAuthApi(async () => Response.json({ user: {} })).me(), { code: 'INVALID_RESPONSE' });

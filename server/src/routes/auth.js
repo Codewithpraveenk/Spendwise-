@@ -27,6 +27,7 @@ function credentials(body, registering) {
 
 export function createAuthRouter({ config, database, googleVerifier }) {
   const router = Router();
+  router.get('/capabilities', (_req, res) => res.set('Cache-Control', 'no-store').json({ passwordRecovery: Boolean(config.smtp || config.brevo) }));
   router.use(accountAccess(database));
   const sessions = database ? createSessions({ models: database.models, production: config.nodeEnv === 'production' }) : null;
   const google = database ? createGoogleAuth({ config, database, verify: googleVerifier }) : null;

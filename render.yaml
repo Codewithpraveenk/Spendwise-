@@ -5,7 +5,7 @@ services:
     name: spendwise
     runtime: node
     plan: free
-    buildCommand: npm ci && npm ci --prefix server && npm run build
+    buildCommand: npm ci --include=dev && npm ci --prefix server --omit=dev && npm run build
     startCommand: npm --prefix server run db:indexes && npm start
     healthCheckPath: /api/ready
     envVars:
@@ -20,19 +20,10 @@ services:
       # Conservative default until the hosting proxy topology is verified.
       - key: TRUST_PROXY
         value: "false"
+      # Preview deliberately has no recovery email until provider setup is completed.
       - key: MAIL_PROVIDER
-        value: brevo
-      - key: APP_ORIGIN
-        sync: false
-      - key: CLIENT_ORIGINS
-        sync: false
+        value: disabled
       - key: MONGODB_URI
         sync: false
       - key: GOOGLE_CLIENT_ID
-        sync: false
-      - key: MAIL_ENCRYPTION_KEY
-        sync: false
-      - key: BREVO_API_KEY
-        sync: false
-      - key: MAIL_FROM
-        sync: false
+        value: 1059108087065-vv0of1bp41racthn8a5dsmdehj102frt.apps.googleusercontent.com

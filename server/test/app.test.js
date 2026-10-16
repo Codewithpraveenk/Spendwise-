@@ -37,6 +37,14 @@ test('account routes report unavailable storage without exposing internals', asy
   assert.equal(blocked.status, 403);
 });
 
+test('public recovery capabilities expose availability without credentials or account data', async (t) => {
+  const request = await listen(t, appFixture().app);
+  const response = await request('/api/auth/capabilities');
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.deepEqual(await response.json(), { passwordRecovery: false });
+});
+
 test('readiness returns 503 without a database and follows database availability', async (t) => {
   const unavailable = await listen(t, appFixture().app);
   assert.equal((await unavailable('/api/ready')).status, 503);

@@ -9,6 +9,14 @@ import { readRecoveryToken, consumeRecoveryFragment } from '../utils/recoveryLin
 const api = createAuthApi();
 export default function RecoveryPage({ resetting = false }) {
   const { expire } = useAuth();
+  const [availability, setAvailability] = useState(null);
+  const [availabilityRevision, setAvailabilityRevision] = useState(0);
+  useEffect(() => {
+    const controller = new AbortController();
+    setAvailability(null);
+    api.capabilities(controller.signal).then((value) => { if (!controller.signal.aborted) setAvailability(value); }).catch(() => { if (!controller.signal.aborted) setAvailability({ error: true }); });
+    return () => controller.abort();
+  }, [availabilityRevision]);
   const [token, setToken] = useState(() => resetting ? readRecoveryToken(window.location.hash) : '');
   const [values, setValues] = useState({ email: '', password: '', confirm: '' });
   const [errors, setErrors] = useState({});
@@ -35,7 +43,7 @@ export default function RecoveryPage({ resetting = false }) {
   function update(name, value) { setValues((previous) => ({ ...previous, [name]: value })); setErrors((previous) => ({ ...previous, [name]: undefined })); }
   async function submit(event) {
     event.preventDefault();
-    if (operation.current || done || (resetting && !validToken)) return;
+    if (operation.current || done || !availability?.passwordRecovery || (resetting && !validToken)) return;
     const next = {};
     if (!resetting && (values.email.trim().length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim()))) next.email = 'Enter a valid email address.';
     if (resetting && (values.password.length < 15 || values.password.length > 128)) next.password = 'Use 15–128 characters. Spaces are welcome.';
@@ -51,6 +59,11 @@ export default function RecoveryPage({ resetting = false }) {
     } catch (error) { if (!controller.signal.aborted) { setFailure(error); setValues((previous) => ({ ...previous, password: '', confirm: '' })); } }
     finally { if (operation.current === controller) { operation.current = null; if (!controller.signal.aborted) setBusy(false); } }
   }
+  if (!availability || availability.error || !availability.passwordRecovery) return <section className="mx-auto max-w-lg">
+    <h1 className="text-3xl font-bold tracking-tight">Password recovery</h1>
+    {!availability ? <p role="status" className="mt-5 text-sm text-slate-600">Checking recovery availability…</p> : availability.error ? <div role="alert" className="mt-5 space-y-4"><p>We couldn’t check recovery availability. Please try again.</p><button type="button" onClick={() => setAvailabilityRevision((value) => value + 1)} className={primaryButtonClass}>Retry connection</button></div> : <p role="status" className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950">Password-reset email is unavailable on this hosted preview. Sign in with your existing password or a Google account you previously connected.</p>}
+    <Link to="/login" className="mt-5 inline-flex min-h-11 items-center text-sm font-medium text-indigo-700 underline">Back to sign in</Link>
+  </section>;
   return <section className="mx-auto max-w-lg">
     <p className="text-xs font-semibold uppercase tracking-widest text-indigo-600">Account recovery</p>
     <h1 className="mt-2 text-3xl font-bold tracking-tight">{resetting ? 'Choose a new password' : 'Forgot your password?'}</h1>

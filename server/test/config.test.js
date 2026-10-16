@@ -2,6 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadConfig } from '../src/config/env.js';
 
+test('Render derives only its trusted environment origin and allows an email-disabled preview', () => {
+  const config = loadConfig({ NODE_ENV: 'production', MONGODB_URI: 'mongodb://localhost/fixture', RENDER: 'true', RENDER_EXTERNAL_URL: 'https://spendwise-fixture.onrender.com', MAIL_PROVIDER: 'disabled', SMTP_HOST: 'ignored.example.com' });
+  assert.equal(config.appOrigin, 'https://spendwise-fixture.onrender.com');
+  assert.deepEqual(config.clientOrigins, [config.appOrigin]);
+  assert.equal(config.smtp, undefined);
+  assert.equal(config.brevo, undefined);
+  assert.throws(() => loadConfig({ NODE_ENV: 'production', MONGODB_URI: 'mongodb://localhost/fixture', RENDER: 'true', RENDER_EXTERNAL_URL: 'http://insecure.example.com' }), /HTTPS/);
+});
+
 test('frontend serving and trusted proxies require explicit supported values', () => {
   assert.equal(loadConfig({}).serveFrontend, false);
   assert.equal(loadConfig({}).trustProxy, false);

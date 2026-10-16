@@ -8,7 +8,9 @@ export function loadConfig(env = process.env) {
   const host = env.HOST ?? (nodeEnv === 'production' ? '0.0.0.0' : '127.0.0.1');
   if (!host || host.trim() !== host || /\s|\//.test(host)) throw new Error('HOST must be a hostname or IP address without spaces or a URL scheme.');
 
-  const originText = env.CLIENT_ORIGINS ?? 'http://localhost:5173,http://127.0.0.1:5173';
+  // Render supplies this server-side value; explicit origins still support custom domains.
+  const renderOrigin = env.RENDER === 'true' ? env.RENDER_EXTERNAL_URL?.trim() : undefined;
+  const originText = env.CLIENT_ORIGINS ?? (nodeEnv === 'production' && renderOrigin ? renderOrigin : 'http://localhost:5173,http://127.0.0.1:5173');
   const clientOrigins = [...new Set(originText.split(',').map((value) => value.trim()))];
   if (!clientOrigins.length || clientOrigins.some((value) => {
     try {
@@ -30,12 +32,12 @@ export function loadConfig(env = process.env) {
   if (!['false', 'loopback', '1'].includes(proxySetting)) throw new Error('TRUST_PROXY must be false, loopback, or 1 for a verified single-proxy deployment.');
   const trustProxy = proxySetting === '1' ? 1 : proxySetting === 'loopback' ? 'loopback' : false;
 
-  const appOrigin = env.APP_ORIGIN?.trim() || (nodeEnv === 'production' ? undefined : 'http://localhost:5173');
+  const appOrigin = env.APP_ORIGIN?.trim() || (nodeEnv === 'production' ? renderOrigin : 'http://localhost:5173');
   if (!appOrigin || !clientOrigins.includes(appOrigin) || (nodeEnv === 'production' && !appOrigin.startsWith('https://'))) throw new Error('APP_ORIGIN must be an allowed frontend origin and use HTTPS in production.');
   const mailKey = env.MAIL_ENCRYPTION_KEY?.trim() || undefined;
   if (mailKey && !/^[a-f0-9]{64}$/i.test(mailKey)) throw new Error('MAIL_ENCRYPTION_KEY must contain 64 hexadecimal characters.');
   const mailProvider = env.MAIL_PROVIDER ?? 'smtp';
-  if (!['smtp', 'brevo'].includes(mailProvider)) throw new Error('MAIL_PROVIDER must be smtp or brevo.');
+  if (!['smtp', 'brevo', 'disabled'].includes(mailProvider)) throw new Error('MAIL_PROVIDER must be smtp, brevo, or disabled.');
   let brevo;
   if (mailProvider === 'brevo') {
     const apiKey = env.BREVO_API_KEY?.trim();
