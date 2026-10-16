@@ -26,15 +26,13 @@ if (-not (Test-Path server/.env)) { Copy-Item server/.env.example server/.env }
 
 Only copy the example when server/.env does not already exist. Keep existing private configuration intact. Configure Atlas and Google using [account setup](docs/real-account-setup.md) and [Google sign-in](docs/google-sign-in.md). Never commit real credentials.
 
-Use two VS Code terminals from the repository root:
-
-```powershell
-npm run dev:server
-```
+Use one VS Code terminal from the repository root:
 
 ```powershell
 npm run dev
 ```
+
+This starts both the backend and frontend, waiting for database readiness before opening Vite. Keep the terminal running. Check connectivity in another terminal with `npm run doctor`.
 
 Open the URL printed by Vite, normally http://localhost:5173. Finance pages require sign-in, the API and MongoDB. Previous browser records are available only through explicit reviewed import; they never populate the account dashboard automatically. Recovery requires a configured email transport.
 

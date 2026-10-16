@@ -6,6 +6,7 @@ export function AccountError({ error }) {
   if (!error) return null;
   return <div role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm leading-6 text-rose-900">
     <p>{error.message}</p>
+    {import.meta.env.DEV && (error.code === 'NETWORK_ERROR' || (error.code === 'INVALID_RESPONSE' && error.status >= 500)) && <p className="mt-2">For local development, start both services from your project’s VS Code terminal with <code className="font-semibold">npm run dev</code>. Check them with <code className="font-semibold">npm run doctor</code>.</p>}
     {error.code === 'DATABASE_UNAVAILABLE' && <p className="mt-1">The backend needs a working MongoDB connection before accounts are available.</p>}
     {error.status === 429 && <p className="mt-1">Wait before trying again{error.retryAfter ? ` (about ${Math.ceil(Number(error.retryAfter) / 60)} minutes)` : ''}.</p>}
   </div>;

@@ -1,40 +1,40 @@
 # Local startup troubleshooting
 
-## Missing authContext.js / blank page
+## Start the complete app
 
-The account provider is now `src/state/AuthProvider.jsx`; the stable context and
-hook are in `src/state/useAuth.js`. There should be no imports of authContext.js
-or AuthContext.jsx. The earlier similarly named files confused Windows/Vite's
-cached module resolution during development.
-
-Stop the running Vite process with Ctrl+C before entering commands. Typing another
-npm command while Vite is running does not start a fresh terminal command.
+Open C:\Users\Praveen\Documents\Spendwise in VS Code. Stop older SpendWise development terminals with Ctrl+C, then use one terminal:
 
 ```powershell
 cd C:\Users\Praveen\Documents\Spendwise
-npm run dev -- --force
+npm run dev
 ```
 
-Refresh the browser after Vite prints its local URL. The force flag rebuilds Vite's
-dependency cache; it does not erase saved finance data. Future starts can use
-`npm run dev` normally.
+This starts Express and waits up to 30 seconds for MongoDB readiness before starting Vite at http://localhost:5173. Keep this terminal running. Do not additionally start a second backend. Ctrl+C stops the development command. The VS Code task SpendWise: Start app (API + frontend) runs the same command.
 
-## ENOENT looking for C:\Users\Praveen\package.json
+## Cannot reach the account server
 
-The terminal is outside the project. Use the cd command above first, or open the
-Spendwise folder in VS Code and create a new integrated terminal.
+The original incident was caused by running the frontend while backend port 5000 had no listener. A working frontend page does not prove the API is running.
 
-## Account API / connection refused / database unavailable
-
-The frontend can run independently. Registration and login additionally require
-Express and a working MongoDB URI in `server/.env`. In a separate terminal:
+In a second terminal:
 
 ```powershell
-cd C:\Users\Praveen\Documents\Spendwise
-npm run dev:server
+npm run doctor
 ```
 
-The backend deliberately reports account storage unavailable if MongoDB is not
-configured. A health response does not prove database readiness. See
-[database setup](backend-step-2.md) and [account instructions](frontend-accounts.md).
-Financial writes need Atlas or a replica set as explained in backend step 4.
+Both API and Frontend API proxy should report ready. If the API fails, inspect the api-prefixed terminal output. Check private server/.env configuration, Atlas network access and your network. Never share the file or credential-bearing connection strings. If you use a custom API port, set SPENDWISE_API_TARGET to its HTTP origin before starting development and before running doctor.
+
+Vite uses port 5173 strictly and keeps localhost on IPv4 so localhost and 127.0.0.1 reach the same server. If the port is occupied, stop the older SpendWise terminal rather than using an unexpected port that Google OAuth does not allow. Use localhost for Google sign-in because that is the configured Google origin.
+
+Backend and frontend can still be started separately for debugging with npm run dev:server and npm run dev:client. Do not mix these with the combined command.
+
+## ENOENT: package.json not found
+
+The terminal is outside the project. Run the cd command above, or open the Spendwise folder in VS Code before creating the terminal.
+
+## Missing authContext.js or stale Vite cache
+
+The provider is src/state/AuthProvider.jsx and the context/hook are src/state/useAuth.js. There should be no imports of authContext.js or AuthContext.jsx. For a cache rebuild only, stop the combined command, then use two debugging terminals: npm run dev:server and npm run dev:client -- --force.
+
+## Database unavailable
+
+/api/health checks whether the process is alive. /api/ready checks database readiness. Financial writes require Atlas or a MongoDB replica set. A wrong-password response is different from a connection failure; do not remove production authentication protections to fix network errors.

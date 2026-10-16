@@ -19,7 +19,7 @@ npm ci --prefix server
 npm run check:release
 ```
 
-This runs frontend/backend checks, builds React and runs seven disposable MongoDB integration suites. It does not read real account records or send real emails. The initial run may download a MongoDB test binary. Normal development still uses two terminals: npm run dev:server and npm run dev.
+This runs frontend/backend checks, builds React and runs seven disposable MongoDB integration suites. It does not read real account records or send real emails. The initial run may download a MongoDB test binary. Normal development now uses one terminal: npm run dev starts both services and waits for database readiness. npm run doctor verifies the API and frontend proxy.
 
 ## Hosting decision
 

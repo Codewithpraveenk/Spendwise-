@@ -2,12 +2,19 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "SpendWise: Start frontend",
+      "label": "SpendWise: Start app (API + frontend)",
       "type": "shell",
       "command": "npm run dev",
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": [],
       "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "SpendWise: Check local services",
+      "type": "shell",
+      "command": "npm run doctor",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
     },
     {
       "label": "SpendWise: Start backend",

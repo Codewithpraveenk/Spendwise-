@@ -66,3 +66,7 @@ Brevo account setup is deferred at the user's request. Added a GitHub Actions wo
 ## Sign-in-first correction
 
 Finance routes now require a verified account session. Public sign-in/register/recovery pages use a separate layout without finance navigation. Every financial view uses account data regardless of legacy source query parameters; browser workspace switching and guest access are removed. New browser import workspaces start empty; older browser records and existing account records are preserved for deliberate reviewed import or normal account use. Browser checks against a disposable MongoDB verified root/direct-route redirects, empty account totals, session restoration and logout. Full release checks passed, including the new route-access rendering regression. See login-first-preview.png and empty-account-preview.png.
+
+## Local connection correction
+
+The reported account-server error was reproduced: backend port 5000 refused connections while Vite was still running. Restarting the backend restored Atlas connectivity. Development now starts both services with npm run dev and waits for database readiness before starting Vite. Port 5173 is strict, and localhost uses IPv4 so both local addresses work. npm run doctor verifies the API and proxy; both passed against the running app. Added a VS Code app task and development-only connection guidance. Release checks passed; hosting, provider setup and the previously deferred controls remain pending.
